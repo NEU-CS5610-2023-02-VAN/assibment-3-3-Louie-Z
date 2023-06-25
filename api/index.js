@@ -1,67 +1,113 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const cors = require('cors');
+const axios = require('axios');
+const qs = require('qs');
 const { PrismaClient } = require('@prisma/client');
+const dotenv = require('dotenv');
 
-const prisma = new PrismaClient();
+dotenv.config();
+
 const app = express();
 
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}.`);
-});
+const prisma = new PrismaClient();
 
-app.get('/users', async (req, res) => {
-    const users = await prisma.user.findMany();
-    res.json(users);
+const getSpotifyAccessToken = async () => {
+  const url = 'https://accounts.spotify.com/api/token';
+  const headers = {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'Authorization': 'Basic ' + (Buffer.from(process.env.SPOTIFY_CLIENT_ID + ':' + process.env.SPOTIFY_CLIENT_SECRET).toString('base64'))
+  };
+  const data = qs.stringify({
+    'grant_type': 'client_credentials'
   });
-  
-app.post('/users', async (req, res) => {
-const { username, email } = req.body;
-const newUser = await prisma.user.create({
-    data: {
-    username,
-    email,
-    },
-});
-res.json(newUser);
-});
 
-app.get('/tracks', async (req, res) => {
-    const tracks = await prisma.track.findMany();
-    res.json(tracks);
-  });
-  
-app.post('/tracks', async (req, res) => {
-const { name, artist, album, cover_image } = req.body;
-const newTrack = await prisma.track.create({
-    data: {
-    name,
-    artist,
-    album,
-    cover_image,
-    },
-});
-res.json(newTrack);
-});
+  try {
+    const response = await axios.post(url, data, { headers });
+    return response.data.access_token;
+  } catch (err) {
+    console.error(err);
+  }
+};
 
-app.get('/comments', async (req, res) => {
-    const comments = await prisma.comment.findMany();
+app.get('/tracks/:id/comments', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const comments = await prisma.comment.findMany({
+      where: {
+        trackId: id,
+      },
+      include: {
+        user: true
+      }
+    });
+
     res.json(comments);
-  });
-  
-app.post('/comments', async (req, res) => {
-const { userId, trackId, comment } = req.body;
-const newComment = await prisma.comment.create({
-    data: {
-    user: { connect: { id: userId } },
-    track: { connect: { id: trackId } },
-    comment,
-    },
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error fetching comments');
+  }
 });
-res.json(newComment);
+
+app.post('/tracks/:id/comments', async (req, res) => {
+  const { id } = req.params;
+  const { userId, comment } = req.body;
+
+  try {
+    const newComment = await prisma.comment.create({
+      data: {
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
+        track: {
+          connect: {
+            id: trackId,
+          },
+        },
+        comment: comment,
+      },
+    });
+
+    res.json(newComment);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error creating comment');
+  }
 });
-  
+
+app.get('/search/:query', async (req, res) => {
+  const { query } = req.params;
+  const accessToken = await getSpotifyAccessToken();
+
+  if (accessToken) {
+    try {
+      const response = await axios.get(`https://api.spotify.com/v1/search?q=${query}&type=track&limit=10`, {
+        headers: {
+          'Authorization': 'Bearer ' + accessToken
+        }
+      });
+
+      const tracks = response.data.tracks.items.map(item => ({
+        id: item.id,
+        name: item.name,
+        artist: item.artists[0].name,
+        album: item.album.name,
+        cover_image: item.album.images[0].url
+      }));
+
+      res.json(tracks);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Error searching tracks');
+    }
+  } else {
+    res.status(500).send('Error fetching Spotify access token');
+  }
+});
+
+app.listen(8000, () => console.log('Server running on http://localhost:8000'));
