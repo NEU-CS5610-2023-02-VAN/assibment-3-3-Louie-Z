@@ -3,12 +3,12 @@
   --primary-color: rgb(199, 90, 0);
   --accent-color: gold;
   --secondary-color: #ccc;
-  --highlight-color: #bdbdbd; 
+  --highlight-color: #bdbdbd;
   --border-radius: 0px;
   --primary-font-size: 16px;
 }
 
-.header {
+header {
   background-color: var(--primary-bg-color);
   padding: 20px;
   display: flex;
@@ -17,7 +17,7 @@
 
 .header-container {
   display: flex;
-  justify-content: center; /* Center the content horizontally */
+  justify-content: space-between;
   align-items: center;
   max-width: 960px;
   width: 100%;
@@ -26,6 +26,14 @@
 .logo-container {
   display: flex;
   align-items: center;
+}
+
+.logo-button {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 .logo {
@@ -40,32 +48,22 @@
   color: var(--primary-color);
 }
 
-.search-form {
+.profile-button-container {
   display: flex;
   align-items: center;
-  margin: auto; /* Centers the form within its container */
 }
 
-.search-form input[type="text"] {
-  width: 500px; 
-  padding: 0.75em; 
-  border: none;
-  border-bottom: 3px solid var(--secondary-color); 
-  margin-right: 10px;
-  font-size: 1.25em; 
-  background-color: var(--highlight-color); 
-  color: var(--primary-bg-color); 
-  border-radius: var(--border-radius);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15); 
-}
-
-.search-form button[type="submit"] {
-  padding: 0.75em 1.5em; 
+.profile-button {
   background-color: var(--accent-color);
   color: var(--primary-bg-color);
+  padding: 0.75em 1em;
   border: none;
-  font-size: 1.25em; 
+  font-size: 1em;
   cursor: pointer;
   border-radius: var(--border-radius);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15); 
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+}
+
+.profile-button:hover {
+  background-color: darkgoldenrod;
 }

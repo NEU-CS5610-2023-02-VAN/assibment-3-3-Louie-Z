@@ -5,15 +5,31 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Auth0Provider } from "@auth0/auth0-react";
 
+
+
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
+const requestedScopes = [
+  "profile",
+  "email",
+  "read:todoitem",
+  "read:user",
+  "edit:todoitem",
+  "edit:user",
+  "delete:todoitem",
+  "delete:user",
+  "write:user",
+  "write:todoitem",
+];
+
 
 root.render(
   <React.StrictMode>
     <Auth0Provider
-      domain="mymovie.us.auth0.com"
-      clientId="DSiNo0g8havaR3gf70MOsLCA6CiMHWqJ"
-      audience="https://api.mymovie"
-      scope="openid profile email"
+      domain={process.env.REACT_APP_AUTH0_DOMAIN}
+      clientId={process.env.REACT_APP_AUTH0_CLIENT_ID}
+      audience={process.env.REACT_APP_AUTH0_AUDIENCE}
       redirectUri={process.env.REACT_APP_AUTH0_REDIRECT_URI}
 >
       <App />

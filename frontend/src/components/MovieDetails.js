@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from 'react';
+import { useAuth0 } from "@auth0/auth0-react";
 import { useParams } from 'react-router-dom';
 import axios from "axios";
 import './MovieDetails.css';
-
 
 function MovieDetails() {
   const { id } = useParams();
   const [selectedMovie, setSelectedMovie] = useState("");
   const [commentInput, setCommentInput] = useState('');
   const [comments, setComments] = useState([]);
+  const [message, setMessage] = useState('');
   const API_KEY = process.env.REACT_APP_API_KEY;
   const calendar = require('../images/calendar.png');
   const time = require('../images/time.png');
   const star = require('../images/star.png');
   const genre = require('../images/genre.png');
+  const { isAuthenticated, getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
     const getMovie = async () => {
