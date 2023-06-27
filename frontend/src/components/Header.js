@@ -32,7 +32,7 @@ function Header() {
       <div className="header-container">
         <div className="logo-container">
           <img className="logo" src={`${process.env.PUBLIC_URL}/popcorn.ico`} alt="Popcorn icon" />
-          <h1 className="app-name">Movie Review</h1>
+          <h1 className="app-name">MyMovies</h1>
         </div>
         <form className="search-form" onSubmit={handleSearch}>
           <input type="text" placeholder="Search for a movie..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />

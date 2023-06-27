@@ -1,5 +1,71 @@
-header {
-  background-color: #2e2d3a;
+:root {
+  --primary-bg-color: #1b182b;
+  --primary-color: rgb(199, 90, 0);
+  --accent-color: gold;
+  --secondary-color: #ccc;
+  --highlight-color: #bdbdbd; 
+  --border-radius: 0px;
+  --primary-font-size: 16px;
+}
+
+.header {
+  background-color: var(--primary-bg-color);
   padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.header-container {
+  display: flex;
+  justify-content: center; /* Center the content horizontally */
+  align-items: center;
+  max-width: 960px;
   width: 100%;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  width: 60px;
+  height: 60px;
+  margin-right: 10px;
+}
+
+.app-name {
+  font-size: 1.75em;
+  margin: 0;
+  color: var(--primary-color);
+}
+
+.search-form {
+  display: flex;
+  align-items: center;
+  margin: auto; /* Centers the form within its container */
+}
+
+.search-form input[type="text"] {
+  width: 500px; 
+  padding: 0.75em; 
+  border: none;
+  border-bottom: 3px solid var(--secondary-color); 
+  margin-right: 10px;
+  font-size: 1.25em; 
+  background-color: var(--highlight-color); 
+  color: var(--primary-bg-color); 
+  border-radius: var(--border-radius);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15); 
+}
+
+.search-form button[type="submit"] {
+  padding: 0.75em 1.5em; 
+  background-color: var(--accent-color);
+  color: var(--primary-bg-color);
+  border: none;
+  font-size: 1.25em; 
+  cursor: pointer;
+  border-radius: var(--border-radius);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15); 
 }

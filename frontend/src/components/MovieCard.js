@@ -35,7 +35,12 @@ function MovieCard() {
   return (
     <div className="movie-container">
       <div className="header">
-        <h1 className="popular">Trending Movies</h1>
+      <h1 className="popular">
+        <span role="img" aria-label="star">⭐</span>
+         What's new!
+        <span role="img" aria-label="star">⭐</span>
+      </h1>
+
       </div>
       {error && <p className="error">{error}</p>}
       <div className="movie-card-container">

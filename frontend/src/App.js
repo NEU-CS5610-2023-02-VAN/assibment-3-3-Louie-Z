@@ -1,21 +1,20 @@
-import React from 'react';
+import React from "react";
+import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Auth0ProviderWithHistory from './auth/Auth0Provider';
-import Login from './pages/Login';
-import Profile from './pages/Profile';
+import Home from "./components/Home";
+import MovieDetails from "./components/MovieDetails";
+import AuthHandler from './components/AuthHandler';  // Import AuthHandler component
 
-const App = () => {
+function App() {
   return (
     <Router>
-      <Auth0ProviderWithHistory>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<Profile />} />
-        </Routes>
-      </Auth0ProviderWithHistory>
+      <Routes>
+        <Route path="/" element={<Home/>} />
+        <Route path="/movies/:id" element={<MovieDetails/>} />
+        <Route path="/verify-user" element={<AuthHandler/>} /> {/* Add new route */}
+      </Routes>
     </Router>
-  );
-};
+  ); 
+}
 
 export default App;
-
