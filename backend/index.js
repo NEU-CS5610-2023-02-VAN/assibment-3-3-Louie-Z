@@ -1,130 +1,124 @@
-const express = require('express');
-const cors = require('cors');
-const axios = require('axios');
-const qs = require('qs');
-const { PrismaClient } = require('@prisma/client');
-const dotenv = require('dotenv');
+import * as dotenv from 'dotenv'
+dotenv.config()
+import express from "express";
+import pkg from "@prisma/client";
+import morgan from "morgan";
+import cors from "cors";
+import { auth } from  'express-oauth2-jwt-bearer'
 
-dotenv.config();
+const requireAuth = auth({
+  audience: process.env.AUTH0_AUDIENCE,
+  issuerBaseURL: process.env.AUTH0_ISSUER,
+  tokenSigningAlg: 'RS256'
+});
 
 const app = express();
 
 app.use(cors());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(morgan("dev"));
 
+const { PrismaClient } = pkg;
 const prisma = new PrismaClient();
 
-const getSpotifyAccessToken = async () => {
-  const url = 'https://accounts.spotify.com/api/token';
-  const headers = {
-    'Content-Type': 'application/x-www-form-urlencoded',
-    'Authorization': 'Basic ' + (Buffer.from(process.env.SPOTIFY_CLIENT_ID + ':' + process.env.SPOTIFY_CLIENT_SECRET).toString('base64'))
-  };
-  const data = qs.stringify({
-    'grant_type': 'client_credentials'
+app.get("/ping", (req, res) => {
+  res.send("pong");
+});
+
+// Get all comments by a user
+app.get("/comments", requireAuth, async (req, res) => {
+  const auth0Id = req.auth.payload.sub;
+
+  console.log(auth0Id)
+
+  const user = await prisma.user.findUnique({
+    where: {
+      auth0Id,
+    },
   });
 
-  try {
-    const response = await axios.post(url, data, { headers });
-    return response.data.access_token;
-  } catch (err) {
-    console.error(err);
-  }
-};
-app.post("/users", async (req, res) => {
-  const { username, email } = req.body;
+  const comments = await prisma.comment.findMany({
+    where: {
+      userId: user.id,
+    },
+  });
 
-  try {
-    const newUser = await prisma.user.create({
-      data: {
-        username,
-        email,
-      },
-    });
-
-    res.status(201).json(newUser);
-  } catch (error) {
-    console.error("Error creating user:", error);
-    res.status(500).json({ error: "Failed to create user" });
-  }
+  res.json(comments);
 });
 
-app.get('/tracks/:id/comments', async (req, res) => {
-  const { id } = req.params;
+// Add a comment
+app.post("/comments", requireAuth, async (req, res) => {
+  const auth0Id = req.auth.payload.sub;
 
-  try {
-    const comments = await prisma.comment.findMany({
-      where: {
-        trackId: id,
-      },
-      include: {
-        user: true
-      }
-    });
+  const { comment, movieId } = req.body;
 
-    res.json(comments);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error fetching comments');
-  }
-});
-
-app.post('/tracks/:id/comments', async (req, res) => {
-  const { id } = req.params;
-  const { userId, comment } = req.body;
-
-  try {
+  if (!comment || !movieId) {
+    res.status(400).send("Both comment and movieId are required");
+  } else {
     const newComment = await prisma.comment.create({
       data: {
-        user: {
-          connect: {
-            id: userId,
-          },
-        },
-        track: {
-          connect: {
-            id: trackId,
-          },
-        },
-        comment: comment,
+        comment,
+        datePosted: new Date(),
+        movie: { connect: { id: movieId } },
+        user: { connect: { auth0Id } },
       },
     });
 
-    res.json(newComment);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error creating comment');
+    res.status(201).json(newComment);
   }
 });
 
-app.get('/search/:query', async (req, res) => {
-  const { query } = req.params;
-  const accessToken = await getSpotifyAccessToken();
-
-  if (accessToken) {
-    try {
-      const response = await axios.get(`https://api.spotify.com/v1/search?q=${query}&type=track&limit=10`, {
-        headers: {
-          'Authorization': 'Bearer ' + accessToken
-        }
-      });
-
-      const tracks = response.data.tracks.items.map(item => ({
-        id: item.id,
-        name: item.name,
-        artist: item.artists[0].name,
-        album: item.album.name,
-        cover_image: item.album.images[0].url
-      }));
-
-      res.json(tracks);
-    } catch (err) {
-      console.error(err);
-      res.status(500).send('Error searching tracks');
-    }
-  } else {
-    res.status(500).send('Error fetching Spotify access token');
-  }
+// Deletes a comment by id
+app.delete("/comments/:id", requireAuth, async (req, res) => {
+  const id = parseInt(req.params.id);
+  const deletedComment = await prisma.comment.delete({
+    where: {
+      id,
+    },
+  });
+  res.json(deletedComment);
 });
 
-app.listen(8000, () => console.log('Server running on http://localhost:8000'));
+// Get a movie by id
+app.get("/movies/:id", requireAuth, async (req, res) => {
+  const id = req.params.id;
+  const movie = await prisma.movie.findUnique({
+    where: {
+      id,
+    },
+  });
+  res.json(movie);
+});
+
+// Update a comment by id
+app.put("/comments/:id", requireAuth, async (req, res) => {
+  const id = parseInt(req.params.id);
+  const { comment } = req.body;
+  const updatedComment = await prisma.comment.update({
+    where: {
+      id,
+    },
+    data: {
+      comment,
+    },
+  });
+  res.json(updatedComment);
+});
+
+// Get profile information of authenticated user
+app.get("/me", requireAuth, async (req, res) => {
+  const auth0Id = req.auth.payload.sub;
+
+  const user = await prisma.user.findUnique({
+    where: {
+      auth0Id,
+    },
+  });
+
+  res.json(user);
+});
+
+app.listen(8000, () => {
+  console.log("Server running on http://localhost:8000 🎉 🚀");
+});
