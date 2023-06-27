@@ -22,9 +22,6 @@ app.use(morgan("dev"));
 const { PrismaClient } = pkg;
 const prisma = new PrismaClient();
 
-app.get("/ping", (req, res) => {
-  res.send("pong");
-});
 
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));

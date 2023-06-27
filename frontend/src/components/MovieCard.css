@@ -1,5 +1,5 @@
 .movie-container {
-  color: white;
+  color: #fff;
 }
 
 .header {
@@ -16,7 +16,7 @@
 }
 
 .movie-card {
-  background-color: #241f38;
+  background-color: #363542;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   border-radius: 5px;
   overflow: hidden;
@@ -38,12 +38,17 @@
 }
 
 .movie-title {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
   margin: 0;
-  margin-top: 8px;
-  padding: 10px;
-  text-align: center;
-  background-color: #ffffff;
-  color: #241f38;
+  margin-bottom: 8px;
+}
+
+.movie-card-content {
+  padding: 16px;
+}
+
+.movie-overview {
+  font-size: 14px;
+  margin: 0;
 }

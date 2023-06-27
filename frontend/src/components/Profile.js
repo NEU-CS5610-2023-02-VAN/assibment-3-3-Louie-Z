@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import Header from "./Header"
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -42,6 +43,8 @@ const Profile = () => {
 
   return (
     <div>
+      <Header/>
+    <div>
       <h2>Profile</h2>
       {user && (
         <div>
@@ -65,6 +68,7 @@ const Profile = () => {
       ) : (
         <p>No comments found.</p>
       )}
+    </div>
     </div>
   );
 };

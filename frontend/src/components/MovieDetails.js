@@ -3,6 +3,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useParams } from 'react-router-dom';
 import axios from "axios";
 import './MovieDetails.css';
+import Header from "./Header"
 
 function MovieDetails() {
   const { id } = useParams();
@@ -45,6 +46,9 @@ function MovieDetails() {
   };
 
   return (
+    <div>
+      <Header />
+    
     <div className="container-horizontal">
       {selectedMovie && (
         <div className="card-horizontal">
@@ -96,6 +100,7 @@ function MovieDetails() {
         </div>
       )}
     </div>
+  /</div>
   );
 
 }
