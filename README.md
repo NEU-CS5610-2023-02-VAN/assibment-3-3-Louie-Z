@@ -17,7 +17,15 @@ Users can use search function to find the every movie they want.
 3. use 'npm start' in frontend folder.
 ```
 
-# .env file
+# backend .env file
 ```
-API
+DATABASE_URL='mysql://3wys0zu1mjdwom4lu2i7:pscale_pw_jYWhFkhj6sayEScokMXbJaOAufPlJ0iQ7mwYUkZYqZe@aws.connect.psdb.cloud/deploy-test?sslaccept=strict'
+```
+# frontend .env file
+```
+REACT_APP_AUTH0_DOMAIN= "mymovie.us.auth0.com"
+REACT_APP_AUTH0_CLIENT_ID= "DSiNo0g8havaR3gf70MOsLCA6CiMHWqJ"
+REACT_APP_AUTH0_AUDIENCE= "https://api.mymovie"
+REACT_APP_AUTH0_REDIRECT_URI="http://localhost:3000/verify-user"
+REACT_APP_API_KEY = "24855c87a028ef005ce758f91183b999"
 ```
