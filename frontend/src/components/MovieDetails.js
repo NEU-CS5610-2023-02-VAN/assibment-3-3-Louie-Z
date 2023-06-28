@@ -77,6 +77,7 @@ function MovieDetails() {
               <p className="overview-title">SYNOPSIS</p>
               <p className="overview-info">{selectedMovie.overview}</p>
             </div>
+            {isAuthenticated && (
             <div className="comment-form">
               <h3>Add Comment</h3>
               <form onSubmit={handleCommentSubmit}>
@@ -88,6 +89,8 @@ function MovieDetails() {
                 <button type="submit">Submit</button>
               </form>
             </div>
+            )}
+            {isAuthenticated && (
             <div className="comment-list">
               <h3>Comments</h3>
               {comments.map((comment) => (
@@ -95,7 +98,7 @@ function MovieDetails() {
                   <p>{comment.text}</p>
                 </div>
               ))}
-            </div>
+            </div>)}
           </div>
         </div>
       )}
