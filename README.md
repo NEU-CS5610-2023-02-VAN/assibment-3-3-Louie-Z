@@ -10,6 +10,8 @@ assignment-3-3-Louie-Z created by GitHub Classroom
 This is a concept of fetching a user's cinema show details like venue, movie, date & showtime. Users can log and give a common to their favourite movies.
 Users can use search function to find the every movie they want.
 
+Click the popcorn, and you'll back to the home page.
+
 # How to run the code in terminal
 ```
 1. Clone this project.
