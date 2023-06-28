@@ -11,9 +11,31 @@
   margin-bottom: 20px;
 }
 
-.user-info {
-  font-size: 18px;
+form {
+  margin-bottom: 20px;
+}
+
+form label {
+  display: block;
   margin-bottom: 10px;
+}
+
+form input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+form button {
+  padding: 10px 20px;
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+form button:hover {
+  background-color: #45a049;
 }
 
 .comments-list {
@@ -35,11 +57,12 @@
 
 .comment-content {
   font-size: 14px;
+  color:white;
   margin: 0;
 }
 
 .no-comments {
   text-align: center;
-  color: #777777;
+  color:white;
   margin-top: 20px;
 }
